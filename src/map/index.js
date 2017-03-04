@@ -1,16 +1,29 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
+// import fetch from 'isomorphic-fetch';
 
-import Navbar from '../ui/navbar';
 import styles from './styles.scss';
+import Navbar from '../ui/navbar';
+import Marker from '../ui/marker';
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
+import sample from './sample.json';
 
 class Map extends Component {
   static defaultProps = {
-    center: { lat: 59.95, lng: 30.33 },
+    center: { lat: -46.378345, lng: -72.3007623 },
     zoom: 11
   };
+
+  state = {
+    loaded: false,
+  }
+
+  componentDidMount() {
+    // fetch('https://unearthed.herokuapp.com/regions/viewRegionData.json')
+    //   .then(res => console.log({
+    //     res
+    //   }))
+  }
 
   render() {
     return (
@@ -20,11 +33,13 @@ class Map extends Component {
           defaultCenter={this.props.center}
           defaultZoom={this.props.zoom}
         >
-          <AnyReactComponent
-            lat={59.955413}
-            lng={30.337844}
-            text={'Kreyser Avrora'}
-          />
+          {sample.mines.map((mine) =>
+            <Marker
+              key={mine.mine.name}
+              lat={mine.mine.lat}
+              lng={mine.mine.lng}
+            />
+          )}
         </GoogleMapReact>
       </section>
     );

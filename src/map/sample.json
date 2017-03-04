@@ -1,0 +1,25 @@
+{
+  "mines": [
+    {
+      "mine": {
+        "name": "Aguas Blancas,  Antofagasta Province,  Antofagasta Region,  Chile",
+        "minerals": [
+          "Thénardite",
+          "Seeligerite",
+          "Schwartzembergite"
+        ],
+        "lat": "-23.2733196",
+        "lng": "-68.0025969",
+        "SWlat": "-23.2746685802915",
+        "SWlng": "-68.0039458802915",
+        "NElat": "-23.2719706197085",
+        "NElng": "-68.00124791970849",
+        "from": 86,
+        "to": 98,
+        "interval": 12,
+        "gold": "1.1",
+        "depth": 175
+      }
+    }
+  ]
+}
