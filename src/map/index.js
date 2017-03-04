@@ -7,48 +7,49 @@ import { Sidebar, Menu, Icon } from 'semantic-ui-react'
 import Navbar from '../ui/navbar';
 import Marker from '../ui/marker';
 
-import sample from './sample.json';
 import styles from './styles.scss';
 
 class Map extends Component {
   static defaultProps = {
     center: { lat: -23.2733196, lng: -68.0025969 },
-    zoom: 6
+    zoom: 1
   };
 
   state = {
     loaded: false,
     visible: false,
+    projects: [],
+    currentProject: {}
   }
 
-  toggleVisibility = () => this.setState({ visible: !this.state.visible })
+  toggleDrawer = currentProject =>
+    this.setState({ visible: !this.state.visible, currentProject });
 
   componentDidMount() {
-    // fetch('https://unearthed.herokuapp.com/regions/viewRegionData.json')
-    //   .then(res => console.log({
-    //     res
-    //   }))
+    // http://unearthed.herokuapp.com/regions/viewSAprojects.json
+    // https://unearthed.herokuapp.com/regions/viewDrillings.json
+    // https://unearthed.herokuapp.com/regions/viewRegionData.json
+    fetch('http://unearthed.herokuapp.com/regions/viewSAprojects.json')
+      .then(res => res.json())
+      .then(json => this.setState({ loaded: true, projects: json }));
   }
 
   render() {
     return (
+      this.state.loaded ?
       <section className={styles.wrapper}>
         <Navbar />
 
         <Sidebar.Pushable>
           <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.visible} icon='labeled' vertical inverted>
-            <Menu.Item name='home'>
-              <Icon name='home' />
-              Home
-            </Menu.Item>
-            <Menu.Item name='gamepad'>
-              <Icon name='gamepad' />
-              Games
-            </Menu.Item>
-            <Menu.Item name='camera'>
-              <Icon name='camera' />
-              Channels
-            </Menu.Item>
+            {this.state.currentProject.properties ?
+              // console.log(this.state.currentProject.properties)
+              Object.keys(this.state.currentProject.properties).map((prop) =>
+              <Menu.Item>
+                {`${prop} : ${this.state.currentProject.properties[prop]}`}
+              </Menu.Item>)
+              : null
+            }
           </Sidebar>
           <Sidebar.Pusher>
             <div className={styles.wrapper}>
@@ -57,12 +58,12 @@ class Map extends Component {
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
               >
-                {sample.mines.map((mine) =>
+                {this.state.projects.features.slice(0, 150).map((project) =>
                   <Marker
-                    key={mine.mine.name}
-                    lat={mine.mine.lat}
-                    lng={mine.mine.lng}
-                    onClick={this.toggleVisibility}
+                    key={project.id}
+                    lat={project.geometry.coordinates[1]}
+                    lng={project.geometry.coordinates[0]}
+                    onClick={() => this.toggleDrawer(project)}
                   />
                 )}
               </GoogleMapReact>
@@ -70,6 +71,8 @@ class Map extends Component {
           </Sidebar.Pusher>
         </Sidebar.Pushable>
       </section>
+      :
+      <div>loading...</div>
     );
   }
 }
