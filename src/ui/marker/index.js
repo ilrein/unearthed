@@ -5,12 +5,9 @@ import deposit from '../icons/deposit.svg';
 import styles from './styles.scss';
 
 class Marker extends React.Component {
-  handleClick = () =>
-    console.log('clicked');
-  
   render() {
     return (
-      <div className={styles.marker} onClick={this.handleClick}>
+      <div className={styles.marker} onClick={this.props.onClick}>
         <img src={deposit} alt="" />
       </div>
     );
