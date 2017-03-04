@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 
-import * as d3 from 'd3';
+import Map from './map';
 
 class App extends Component {
-  componentDidMount() {
-    d3.select('.app').append('svg');
-  }
+  componentDidMount() {}
 
   render() {
-    console.log(d3);
     return (
-      <div className="app" />
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+      }}>
+        <Map />
+      </div>
     );
   }
 }
