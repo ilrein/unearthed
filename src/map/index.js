@@ -9,6 +9,8 @@ import Marker from '../ui/marker';
 
 import styles from './styles.scss';
 
+const clean = str => str.split('.').join(' ');
+
 class Map extends Component {
   static defaultProps = {
     center: { lat: -23.2733196, lng: -68.0025969 },
@@ -23,17 +25,14 @@ class Map extends Component {
   }
 
   toggleDrawer = currentProject =>
-    this.setState({ visible: !this.state.visible, currentProject });
+    this.setState({ visible: true, currentProject });
 
   componentDidMount() {
     // http://unearthed.herokuapp.com/regions/viewSAprojects.json
     // https://unearthed.herokuapp.com/regions/viewDrillings.json
     // https://unearthed.herokuapp.com/regions/viewRegionData.json
     fetch('https://raw.githubusercontent.com/ChalkyBrush/unearthed17/master/app/assets/ProjectSA_geojson.json')
-      .then(res => {
-        console.log(res);
-        return res.json()
-      })
+      .then(res => res.json())
       .then(json => this.setState({ loaded: true, projects: json }));
   }
 
@@ -44,12 +43,22 @@ class Map extends Component {
         <Navbar />
 
         <Sidebar.Pushable>
-          <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.visible} icon='labeled' vertical inverted>
+          <Sidebar
+            as={Menu}
+            animation="overlay"
+            width="thin"
+            visible={this.state.visible}
+            icon="labeled"
+            vertical
+            inverted
+            direction="right"
+          >
             {this.state.currentProject.properties ?
-              // console.log(this.state.currentProject.properties)
               Object.keys(this.state.currentProject.properties).map((prop, index) =>
               <Menu.Item key={index}>
-                {`${prop} : ${this.state.currentProject.properties[prop]}`}
+                <small>{`${clean(prop)}`}</small>
+                <hr className={styles.hr} />
+                <small>{`${this.state.currentProject.properties[prop]}`}</small>
               </Menu.Item>)
               : null
             }
