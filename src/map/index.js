@@ -3,7 +3,7 @@ import GoogleMapReact from 'google-map-react';
 import { Sidebar, Menu } from 'semantic-ui-react'
 // import fetch from 'isomorphic-fetch';
 
-// import Drawer from '../ui/drawer';
+import Toggler from '../ui/toggler';
 import Navbar from '../ui/navbar';
 import Marker from '../ui/marker';
 
@@ -45,14 +45,17 @@ class Map extends Component {
     currentProject: {},
     currentType: null,
     projects: {
+      show: true,
       loaded: false,
       data: {}
     },
     construction: {
+      show: true,
       loaded: false,
       data: {}
     },
     operation: {
+      show: true,
       loaded: false,
       data: {}
     }
@@ -60,6 +63,15 @@ class Map extends Component {
 
   toggleDrawer = (currentProject, currentType) =>
     this.setState({ visible: true, currentProject, currentType });
+
+  toggleOperation = () =>
+    this.setState({ operation: { ...this.state.operation, show: !this.state.operation.show } }, () => console.log(this.state.operation), () => console.log(this.state.operation));
+
+  toggleProjects = () =>
+    this.setState({ projects: { ...this.state.projects, show: !this.state.projects.show } }, () => console.log(this.state.operation), () => console.log(this.state.operation));
+
+  toggleConstruction = () =>
+    this.setState({ construction: { ...this.state.construction, show: !this.state.construction.show } }, () => console.log(this.state.operation), () => console.log(this.state.operation));
 
   componentDidMount() {
     // http://unearthed.herokuapp.com/regions/viewSAprojects.json
@@ -72,6 +84,7 @@ class Map extends Component {
           { projects: {
             loaded: true,
             data: json,
+            show: true,
           } }
         )
       });
@@ -83,6 +96,7 @@ class Map extends Component {
           { construction: {
             loaded: true,
             data: json,
+            show: true,
           } }
         )
       });
@@ -94,6 +108,7 @@ class Map extends Component {
           { operation: {
             loaded: true,
             data: json,
+            show: true,
           } }
         )
       });
@@ -129,17 +144,18 @@ class Map extends Component {
           </Sidebar>
           <Sidebar.Pusher>
             <div className={styles.wrapper}>
+              <Toggler
+                onToggleOperation={this.toggleOperation}
+                onToggleProject={this.toggleProjects}
+                onToggleConstruction={this.toggleConstruction}
+              />
               <GoogleMapReact
                 bootstrapURLKeys={{ key: 'AIzaSyBm0sWmD1JQ2j4BRQaBaenY_r-qH_mDgS0' }}
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
                 options={createMapOptions}
-                // onGoogleApiLoaded={({map, maps}) => {
-                //   console.log(map);
-                //   map.styles = this.props.styles
-                // }}
               >
-                {this.state.projects.loaded ?
+                {this.state.projects.loaded && this.state.projects.show ?
                   this.state.projects.data.features.slice(0, 150).map((project) =>
                     <Marker
                       key={project.id}
@@ -153,7 +169,7 @@ class Map extends Component {
                   null
                 }
 
-                {this.state.construction.loaded ?
+                {this.state.construction.loaded && this.state.construction.show ?
                   this.state.construction.data.features.slice(0, 150).map((project) =>
                     <Marker
                       key={project.id}
@@ -169,7 +185,7 @@ class Map extends Component {
                   null
                 }
 
-                {this.state.operation.loaded ?
+                {this.state.operation.loaded && this.state.operation.show ?
                   this.state.operation.data.features.slice(0, 150).map((project) =>
                     <Marker
                       key={project.id}
