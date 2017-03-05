@@ -24,3 +24,14 @@
 .menu-title {
   color: #5C6BC0 !important;
 }
+
+.feed {
+  position: absolute;
+  z-index: 1000;
+  bottom: 0.8rem;
+  right: 3rem;
+}
+
+.invisible {
+  display: none;
+}

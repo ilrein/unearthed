@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import { Sidebar, Menu } from 'semantic-ui-react'
-// import fetch from 'isomorphic-fetch';
+import cx from 'classnames';
 
 import Toggler from '../ui/toggler';
 import Navbar from '../ui/navbar';
 import Marker from '../ui/marker';
+import NewsFeed from '../ui/news-feed';
 
 import deposit from '../ui/icons/deposit.svg';
 import operation from '../ui/icons/operation.svg';
@@ -43,6 +44,9 @@ class Map extends Component {
   state = {
     visible: false,
     currentProject: {},
+    currentNews: {
+      visible: false,
+    },
     currentType: null,
     projects: {
       show: true,
@@ -62,7 +66,21 @@ class Map extends Component {
   }
 
   toggleDrawer = (currentProject, currentType) =>
-    this.setState({ visible: true, currentProject, currentType });
+    this.setState({
+      visible: true,
+      currentProject: {
+        visible: true,
+        ...currentProject,
+      },
+      currentType
+    }, () => {
+      const string = `${this.state.currentProject.properties['property.name']} mine`;
+      fetch(`https://api.cognitive.microsoft.com/bing/v5.0/news/search?q=${string}&count=5&offset=0&mkt=en-us`, {
+        headers: { 'Ocp-Apim-Subscription-Key': 'da29215d2a7a495dadf5d074181f18da' }
+      })
+        .then(response => response.json())
+        .then(json => this.setState({ currentNews: { visible: true, ...json }}));
+    });
 
   toggleOperation = () =>
     this.setState({ operation: { ...this.state.operation, show: !this.state.operation.show } }, () => console.log(this.state.operation), () => console.log(this.state.operation));
@@ -118,7 +136,12 @@ class Map extends Component {
     return (
       <section className={styles.wrapper}>
         <Navbar />
-
+        {this.state.currentNews.visible ?
+          <div className={cx(styles.feed, this.state.currentProject.visible ? null : styles.invisible)}>
+            <NewsFeed data={this.state.currentNews} />
+          </div> :
+          null
+        }
         <Sidebar.Pushable>
           <Sidebar
             as={Menu}
