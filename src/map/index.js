@@ -130,6 +130,18 @@ class Map extends Component {
           } }
         )
       });
+
+    fetch('https://raw.githubusercontent.com/ChalkyBrush/unearthed17/master/app/assets/chileMinerals.json')
+      .then(res => res.json())
+      .then(json => {
+        this.setState(
+          { mineralRegion: {
+            loaded: true,
+            data: json,
+            show: true,
+          } }
+        )
+      });
   }
 
   render() {
@@ -227,6 +239,7 @@ class Map extends Component {
                   :
                   null
                 }
+
               </GoogleMapReact>
             </div>
           </Sidebar.Pusher>
