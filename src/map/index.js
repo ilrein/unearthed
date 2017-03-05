@@ -7,6 +7,7 @@ import Toggler from '../ui/toggler';
 import Navbar from '../ui/navbar';
 import Marker from '../ui/marker';
 import NewsFeed from '../ui/news-feed';
+import ModalExampleControlled from '../ui/modal';
 
 import deposit from '../ui/icons/deposit.svg';
 import operation from '../ui/icons/operation.svg';
@@ -42,6 +43,10 @@ class Map extends Component {
   };
 
   state = {
+    gmap: {
+      map: null,
+      maps: null
+    },
     visible: false,
     currentProject: {},
     currentNews: {
@@ -62,8 +67,26 @@ class Map extends Component {
       show: true,
       loaded: false,
       data: {}
-    }
+    },
+    mineralRegion: {
+      show: true,
+      loaded: true,
+      data: {},
+    },
+    modalOpen: false,
+    minerals: []
   }
+
+  handleOpen = (e) => {
+    console.log('opening...');
+    this.setState({
+      modalOpen: true,
+    })
+  }
+
+  handleClose = (e) => this.setState({
+    modalOpen: false,
+  })
 
   toggleDrawer = (currentProject, currentType) =>
     this.setState({
@@ -145,9 +168,33 @@ class Map extends Component {
   }
 
   render() {
+    if (this.state.gmap.map && this.state.gmap.maps) {
+      const regions = this.state.mineralRegion.data;
+      if (Object.keys(regions).length > 0) {
+        Object.keys(regions).map(region => { // eslint-disable-line
+          const rectangle = new this.state.gmap.maps.Rectangle({ // eslint-disable-line
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 0.1,
+            fillColor: '#ffffff',
+            fillOpacity: 0.35,
+            map: this.state.gmap.map,
+            bounds: new this.state.gmap.maps.LatLngBounds(
+              new this.state.gmap.maps.LatLng(regions[region].SWlat, regions[region].SWlng),
+              new this.state.gmap.maps.LatLng(regions[region].NElat, regions[region].NElng))
+            });
+
+            rectangle.addListener('click', () => {
+              // console.log('testing...', regions[region].minerals);
+              this.setState({ modalOpen: true, minerals: regions[region].minerals })
+            });
+        })
+      }
+    }
     return (
       <section className={styles.wrapper}>
         <Navbar />
+        <ModalExampleControlled open={this.state.modalOpen} handleClose={this.handleClose} data={this.state.minerals} />
         {this.state.currentNews.visible ?
           <div className={cx(styles.feed, this.state.currentProject.visible ? null : styles.invisible)}>
             <NewsFeed data={this.state.currentNews} onClose={() => this.setState({ currentNews: { ...this.state.currentNews, visible: false }})} />
@@ -189,7 +236,9 @@ class Map extends Component {
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
                 options={createMapOptions}
+                onGoogleApiLoaded={({map, maps}) => this.setState({ gmap: { map, maps} })}
               >
+
                 {this.state.projects.loaded && this.state.projects.show ?
                   this.state.projects.data.features.slice(0, 150).map((project) =>
                     <Marker
