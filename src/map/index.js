@@ -162,7 +162,7 @@ class Map extends Component {
                       icon={deposit}
                       lat={project.geometry.coordinates[1]}
                       lng={project.geometry.coordinates[0]}
-                      onClick={() => this.toggleDrawer(project, 'Project')}
+                      onClick={() => this.toggleDrawer(project, 'Exploration')}
                       active={project.id === this.state.currentProject.id}
                     />
                   )

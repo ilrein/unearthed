@@ -15,7 +15,7 @@ const Toggler = ({ onToggleOperation, onToggleProject, onToggleConstruction }) =
       <Checkbox slider onChange={onToggleConstruction} />
     </div>
     <div className={styles.wrapper}>
-      <p>Project</p>
+      <p>Exploration</p>
       <Checkbox slider onChange={onToggleProject} />
     </div>
   </div>;
