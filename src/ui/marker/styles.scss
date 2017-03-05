@@ -18,6 +18,10 @@
   background-color: yellow;
 }
 
+.purple {
+  background-color: lighten(purple, 20%);
+}
+
 .small {
   display: flex;
   align-items: center;

@@ -8,6 +8,7 @@ import Navbar from '../ui/navbar';
 import Marker from '../ui/marker';
 
 import deposit from '../ui/icons/deposit.svg';
+import operation from '../ui/icons/operation.svg';
 import miner from '../ui/icons/miner.svg';
 import styles from './styles.scss';
 
@@ -22,6 +23,7 @@ class Map extends Component {
   state = {
     visible: false,
     currentProject: {},
+    currentType: null,
     projects: {
       loaded: false,
       data: {}
@@ -29,11 +31,15 @@ class Map extends Component {
     construction: {
       loaded: false,
       data: {}
+    },
+    operation: {
+      loaded: false,
+      data: {}
     }
   }
 
-  toggleDrawer = currentProject =>
-    this.setState({ visible: true, currentProject });
+  toggleDrawer = (currentProject, currentType) =>
+    this.setState({ visible: true, currentProject, currentType });
 
   componentDidMount() {
     // http://unearthed.herokuapp.com/regions/viewSAprojects.json
@@ -61,7 +67,16 @@ class Map extends Component {
         )
       });
 
-
+    fetch('https://raw.githubusercontent.com/ChalkyBrush/unearthed17/master/app/assets/PropertiesOperation_geojson.json')
+      .then(res => res.json())
+      .then(json => {
+        this.setState(
+          { operation: {
+            loaded: true,
+            data: json,
+          } }
+        )
+      });
   }
 
   render() {
@@ -79,6 +94,9 @@ class Map extends Component {
             vertical
             inverted
           >
+            <Menu.Item className={styles.title}>
+              {this.state.currentType}
+            </Menu.Item>
             {this.state.currentProject.properties ?
               Object.keys(this.state.currentProject.properties).map((prop, index) =>
               <Menu.Item key={index}>
@@ -103,7 +121,7 @@ class Map extends Component {
                       icon={deposit}
                       lat={project.geometry.coordinates[1]}
                       lng={project.geometry.coordinates[0]}
-                      onClick={() => this.toggleDrawer(project)}
+                      onClick={() => this.toggleDrawer(project, 'Project')}
                     />
                   )
                   :
@@ -117,8 +135,24 @@ class Map extends Component {
                       icon={miner}
                       lat={project.geometry.coordinates[1]}
                       lng={project.geometry.coordinates[0]}
-                      onClick={() => this.toggleDrawer(project)}
+                      onClick={() => this.toggleDrawer(project, 'Construction')}
                       bgColor="yellow"
+                      size="small"
+                    />
+                  )
+                  :
+                  null
+                }
+
+                {this.state.operation.loaded ?
+                  this.state.operation.data.features.slice(0, 150).map((project) =>
+                    <Marker
+                      key={project.id}
+                      icon={operation}
+                      lat={project.geometry.coordinates[1]}
+                      lng={project.geometry.coordinates[0]}
+                      onClick={() => this.toggleDrawer(project, 'Operation')}
+                      bgColor="purple"
                       size="small"
                     />
                   )
