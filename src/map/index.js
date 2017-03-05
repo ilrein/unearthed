@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
-import { Sidebar, Menu, Icon } from 'semantic-ui-react'
+import { Sidebar, Menu } from 'semantic-ui-react'
 // import fetch from 'isomorphic-fetch';
 
 // import Drawer from '../ui/drawer';
 import Navbar from '../ui/navbar';
 import Marker from '../ui/marker';
 
+import deposit from '../ui/icons/deposit.svg';
+import miner from '../ui/icons/miner.svg';
 import styles from './styles.scss';
 
 const clean = str => str.split('.').join(' ');
@@ -18,10 +20,16 @@ class Map extends Component {
   };
 
   state = {
-    loaded: false,
     visible: false,
-    projects: [],
-    currentProject: {}
+    currentProject: {},
+    projects: {
+      loaded: false,
+      data: {}
+    },
+    construction: {
+      loaded: false,
+      data: {}
+    }
   }
 
   toggleDrawer = currentProject =>
@@ -33,12 +41,31 @@ class Map extends Component {
     // https://unearthed.herokuapp.com/regions/viewRegionData.json
     fetch('https://raw.githubusercontent.com/ChalkyBrush/unearthed17/master/app/assets/ProjectSA_geojson.json')
       .then(res => res.json())
-      .then(json => this.setState({ loaded: true, projects: json }));
+      .then(json => {
+        this.setState(
+          { projects: {
+            loaded: true,
+            data: json,
+          } }
+        )
+      });
+
+    fetch('https://raw.githubusercontent.com/ChalkyBrush/unearthed17/master/app/assets/PropertiesConstruction_geojson.json')
+      .then(res => res.json())
+      .then(json => {
+        this.setState(
+          { construction: {
+            loaded: true,
+            data: json,
+          } }
+        )
+      });
+
+
   }
 
   render() {
     return (
-      this.state.loaded ?
       <section className={styles.wrapper}>
         <Navbar />
 
@@ -51,7 +78,6 @@ class Map extends Component {
             icon="labeled"
             vertical
             inverted
-            direction="right"
           >
             {this.state.currentProject.properties ?
               Object.keys(this.state.currentProject.properties).map((prop, index) =>
@@ -70,21 +96,40 @@ class Map extends Component {
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
               >
-                {this.state.projects.features.slice(0, 150).map((project) =>
-                  <Marker
-                    key={project.id}
-                    lat={project.geometry.coordinates[1]}
-                    lng={project.geometry.coordinates[0]}
-                    onClick={() => this.toggleDrawer(project)}
-                  />
-                )}
+                {this.state.projects.loaded ?
+                  this.state.projects.data.features.slice(0, 150).map((project) =>
+                    <Marker
+                      key={project.id}
+                      icon={deposit}
+                      lat={project.geometry.coordinates[1]}
+                      lng={project.geometry.coordinates[0]}
+                      onClick={() => this.toggleDrawer(project)}
+                    />
+                  )
+                  :
+                  null
+                }
+
+                {this.state.construction.loaded ?
+                  this.state.construction.data.features.slice(0, 150).map((project) =>
+                    <Marker
+                      key={project.id}
+                      icon={miner}
+                      lat={project.geometry.coordinates[1]}
+                      lng={project.geometry.coordinates[0]}
+                      onClick={() => this.toggleDrawer(project)}
+                      bgColor="yellow"
+                      size="small"
+                    />
+                  )
+                  :
+                  null
+                }
               </GoogleMapReact>
             </div>
           </Sidebar.Pusher>
         </Sidebar.Pushable>
       </section>
-      :
-      <div>loading...</div>
     );
   }
 }
