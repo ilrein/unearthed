@@ -1,14 +1,14 @@
 import React from 'react'
-import { Card, Feed } from 'semantic-ui-react';
+import { Card, Feed, Icon } from 'semantic-ui-react';
 import moment from 'moment';
 
 import styles from './styles.scss';
 
-const NewsFeed = ({ data }) =>
+const NewsFeed = ({ data, onClose }) =>
   <Card className={styles.black}>
     <Card.Content>
       <Card.Header className={styles.white}>
-        Recent Activity
+        Recent Activity <a><Icon name="window close" onClick={onClose} /></a>
       </Card.Header>
     </Card.Content>
     <Card.Content>

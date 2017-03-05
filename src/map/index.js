@@ -138,7 +138,7 @@ class Map extends Component {
         <Navbar />
         {this.state.currentNews.visible ?
           <div className={cx(styles.feed, this.state.currentProject.visible ? null : styles.invisible)}>
-            <NewsFeed data={this.state.currentNews} />
+            <NewsFeed data={this.state.currentNews} onClose={() => this.setState({ currentNews: { ...this.state.currentNews, visible: false }})} />
           </div> :
           null
         }
