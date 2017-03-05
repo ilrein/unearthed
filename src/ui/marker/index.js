@@ -10,7 +10,8 @@ class Marker extends React.Component {
         cx(
           styles.marker,
           styles[this.props.bgColor],
-          styles[this.props.size]
+          styles[this.props.size],
+          this.props.active ? styles.active: null,
         )
       } onClick={this.props.onClick}>
         <img src={this.props.icon} alt="" />

@@ -37,7 +37,7 @@ function createMapOptions(maps) {
 class Map extends Component {
   static defaultProps = {
     center: { lat: -23.2733196, lng: -68.0025969 },
-    zoom: 1,
+    zoom: 4,
   };
 
   state = {
@@ -163,6 +163,7 @@ class Map extends Component {
                       lat={project.geometry.coordinates[1]}
                       lng={project.geometry.coordinates[0]}
                       onClick={() => this.toggleDrawer(project, 'Project')}
+                      active={project.id === this.state.currentProject.id}
                     />
                   )
                   :
@@ -179,6 +180,7 @@ class Map extends Component {
                       onClick={() => this.toggleDrawer(project, 'Construction')}
                       bgColor="yellow"
                       size="small"
+                      active={project.id === this.state.currentProject.id}
                     />
                   )
                   :
@@ -195,6 +197,7 @@ class Map extends Component {
                       onClick={() => this.toggleDrawer(project, 'Operation')}
                       bgColor="purple"
                       size="small"
+                      active={project.id === this.state.currentProject.id}
                     />
                   )
                   :
