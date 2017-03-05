@@ -135,7 +135,7 @@ class Map extends Component {
             {this.state.currentProject.properties ?
               Object.keys(this.state.currentProject.properties).map((prop, index) =>
               <Menu.Item key={index}>
-                <small>{`${clean(prop)}`}</small>
+                <small className={styles['menu-title']}>{`${clean(prop)}`}</small>
                 <hr className={styles.hr} />
                 <small>{`${this.state.currentProject.properties[prop]}`}</small>
               </Menu.Item>)
@@ -163,6 +163,7 @@ class Map extends Component {
                       lat={project.geometry.coordinates[1]}
                       lng={project.geometry.coordinates[0]}
                       onClick={() => this.toggleDrawer(project, 'Exploration')}
+                      bgColor="green"
                       active={project.id === this.state.currentProject.id}
                     />
                   )
